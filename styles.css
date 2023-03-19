@@ -1,0 +1,190 @@
+body {
+    background: #CCD5AE;
+    margin: 0;
+}
+
+/* header styles */
+
+.header-container {
+    background: #E9EDC9;
+    display: grid;
+    grid-template-columns: 3fr 1fr 1fr 1fr 1fr 2fr;
+    height: 42px;
+    align-items: center;
+}
+
+.logo {
+    color: green;
+    margin-left: 20px;
+    font-size: 25px;
+}
+
+.header-item {
+    height: 100%;
+    width: 100%;
+    line-height: 42px;
+    text-align: center;
+    border-radius: 25px;
+}
+
+.header-item:hover {
+    cursor: pointer;
+    background: #FEFAE0;
+}
+
+.header-container > a {
+    text-decoration: none;
+    color: black;
+}
+
+/* content styles */
+
+.content {
+    margin: 15px;
+}
+
+/* description styles */
+.description{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.description img {
+    margin-right: 20px;
+    width: 200px;
+    height: auto;
+}
+/* today styles */
+
+#today {
+
+}
+
+.today-data{
+    text-align: center;
+    ext-decoration-style: solid;
+    margin: 5px;
+    color: red;
+    font-style: oblique;
+    font-weight: 900;
+    font-stretch: ultra-expanded;
+}
+
+.today-item {
+    margin: 50px;
+    display: grid;
+}
+
+
+.today-text {
+      padding: 10px;
+      width: 40%;
+      height: 100%;
+      text-align: justify;
+}
+
+.today-photo > img {
+    width: 40%;
+    border-radius: 50px;
+}
+
+/* tomorrow styles*/
+
+#tomorrow {
+
+}
+
+.tomorrow-data{
+    text-align: center;
+    ext-decoration-style: solid;
+    margin: 5px;
+    color: red;
+    font-style: oblique;
+    font-weight: 900;
+    font-stretch: ultra-expanded;
+}
+
+
+.tomorrow-item {
+    margin: 50px;
+    display: grid;
+}
+
+
+.tomorrow-text {
+      padding: 10px;
+      width: 40%;
+      height: 100%;
+      text-align: justify;
+}
+
+.tomorrow-photo img {
+    width: 40%;
+    border-radius: 50px;
+}
+
+/* calendar styles*/
+
+.calendar-photo img{
+    display: block;
+    margin: 0 auto;
+}
+
+/* subs styles */
+.subscribe-text {
+    width: 60%;
+    margin: auto;
+    text-align: justify;
+}
+
+.subscribe-form {
+    margin-top: 20px;
+}
+
+form {
+    display: grid;
+    grid-template-rows: repeat(4, 40px);
+    grid-row-gap: 10px;
+    width: 500px;
+    margin: auto;
+}
+
+input, select {
+    height: 35px;
+    border: none;
+    border-radius: 15px;
+    font-size: 15px;
+    padding-left: 15px;
+}
+
+#submit-form {
+    height: 40px;
+    background: chocolate;
+    border: none;
+    border-radius: 15px;
+}
+#submit-form:hover {
+    cursor: pointer;
+    opacity: 80%;
+}
+
+
+/* footer styles */
+
+.footer-container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    height: 50px;
+    align-items: center;
+}
+
+.footer-item {
+    text-align: center;
+}
+
+.footer-item img {
+    width: 10%;
+}
+
+/* calendar */
