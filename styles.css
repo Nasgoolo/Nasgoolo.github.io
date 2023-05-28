@@ -8,7 +8,7 @@ body {
 .header-container {
     background: #E9EDC9;
     display: grid;
-    grid-template-columns: 3fr 1fr 1fr 1fr 1fr 2fr;
+    grid-template-columns: 1fr 1fr 1fr;
     height: 42px;
     align-items: center;
 }

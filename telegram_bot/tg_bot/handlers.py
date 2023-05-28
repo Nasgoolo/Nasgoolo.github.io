@@ -1,13 +1,11 @@
 import json
-from pprint import pprint
 import requests
-from .services import WeatherService, WeatherServiceException, NoInfoException
+from .services import WeatherService, WeatherServiceException, NoInfoException, get_exchange_rates, get_holidays
 from .database import add_contact, get_contact, delete_contact, display_contacts
 from .config import AppConfig
 
 BOT_TOKEN = AppConfig.BOT_TOKEN
 TG_BASE_URL = AppConfig.TG_BASE_URL
-WEATHER_TYPE = 'weather'
 
 
 class User:
@@ -49,7 +47,34 @@ class MessageHandler(TelegramHandler):
     def handle(self):
 
         match self.text.split()[0]:
-            case WEATHER_TYPE, city:
+
+            case 'holiday':
+                if len(self.text.split()) < 2:
+                    self.send_message("Please specify the country code.")
+                else:
+                    try:
+                        country_code = self.text.split()[1]
+                        holidays = get_holidays(country_code)
+                        if holidays and holidays['response']['holidays']:
+                            holiday_list = []
+                            for holiday in holidays['response']['holidays']:
+                                name = holiday['name']
+                                description = holiday['description']
+                                holiday_info = f"Name: {name}\nDescription: {description}\n"
+                                holiday_list.append(holiday_info)
+                            holiday_text = "\n".join(holiday_list)
+                            self.send_message(holiday_text)
+                        else:
+                            self.send_message("There are no holidays in this country today.")
+                    except Exception as e:
+                        self.send_message(f"An error occurred while retrieving holidays: {str(e)}")
+
+            case 'weather':
+                city = ''
+                if len(self.text.split()) < 2:
+                    self.send_message("Please specify the name of the city.")
+                else:
+                    city = self.text.split()[1]
                 try:
                     geo_data = WeatherService.get_geo_data(city)
                 except WeatherServiceException as wse:
@@ -60,13 +85,38 @@ class MessageHandler(TelegramHandler):
                         test_button = {
                             'text': f'{item.get("name")} - {item.get("admin1")} in {item.get("country")}',
                             'callback_data': json.dumps(
-                                {'type': WEATHER_TYPE, 'lat': item.get('latitude'), 'lon': item.get('longitude')})
+                                {'type': 'weather', 'lat': item.get('latitude'), 'lon': item.get('longitude')})
                         }
                         buttons.append([test_button])
                     markup = {
                         'inline_keyboard': buttons
                     }
                     self.send_markup_message('Choose a city from a list:', markup)
+
+            case 'sun_data':
+                city = ''
+                if len(self.text.split()) < 2:
+                    self.send_message("Please specify the name of the city.")
+                else:
+                    city = self.text.split()[1]
+                try:
+                    geo_data = WeatherService.get_geo_data(city)
+                except Exception as wse:
+                    self.send_message(str(wse))
+                else:
+                    buttons = []
+                    for item in geo_data:
+                        test_button = {
+                            'text': f'{item.get("name")} - {item.get("admin1")} in {item.get("country")}',
+                            'callback_data': json.dumps(
+                                {'type': 'sun_data', 'lat': item.get('latitude'), 'lon': item.get('longitude')})
+                        }
+                        buttons.append([test_button])
+                    markup = {
+                        'inline_keyboard': buttons
+                    }
+                    self.send_markup_message('Choose a city from a list:', markup)
+
             case 'add_contact':
                 if len(self.text.split()) < 3:
                     self.send_message("Please specify the name and phone number of the contact.")
@@ -77,19 +127,22 @@ class MessageHandler(TelegramHandler):
                         self.send_message("Contact added successfully.")
                     except Exception as e:
                         self.send_message(f"An error occurred while adding the contact: {str(e)}")
+
             case 'get_contact':
                 if len(self.text.split()) < 2:
                     self.send_message("Please specify the name of the contact.")
                 else:
                     try:
                         name = self.text.split()[1]
-                        contact = get_contact(self.user.id, name)
+                        contact = vars(get_contact(self.user.id, name))
+                        print(type(contact))
                         if contact:
                             self.send_message(f"Name: {contact['name']}, Phone Number: {contact['phone']}")
                         else:
                             self.send_message("Contact not found.")
-                    except Exception as e:
-                        self.send_message(f"An error occurred while retrieving the contact: {str(e)}")
+                    except Exception:
+                        self.send_message("Contact not found.")
+
             case 'delete_contact':
                 if len(self.text.split()) < 2:
                     self.send_message("Please specify the name of the contact.")
@@ -104,6 +157,7 @@ class MessageHandler(TelegramHandler):
                             self.send_message("Contact not found.")
                     except Exception as e:
                         self.send_message(f"An error occurred while deleting the contact: {str(e)}")
+
             case '/display_contacts':
                 try:
                     contacts = display_contacts(self.user.id)
@@ -116,15 +170,32 @@ class MessageHandler(TelegramHandler):
                         self.send_message(contact_list)
                     else:
                         self.send_message("No contacts found.")
+
+            case '/exchange_rate':
+                try:
+                    exchange_rates = get_exchange_rates()
+                    output = "Exchange rate:\n"
+                    output += f"1 USD = {round(exchange_rates['rates']['UAH'], 2)} UAH\n"
+                    output += f"1 USD = {round(exchange_rates['rates']['EUR'], 2)} EUR\n"
+                    output += f"1 USD = {round(exchange_rates['rates']['PLN'], 2)} PLN\n"
+                    output += f"1 PLN = {round(exchange_rates['rates']['UAH'] / exchange_rates['rates']['PLN'], 2)} UAH\n"
+                    output += f"1 EUR = {round(exchange_rates['rates']['UAH'] / exchange_rates['rates']['EUR'], 2)} UAH\n"
+
+                    self.send_message(output)
+                except Exception as e:
+                    self.send_message(f"An error occurred while retrieving the exchange rate: {str(e)}")
+
             case '/commands':
-                print(self.text.split())
                 command_list = [
-                    "weather  - Display current weather",
-                    "add_contact - Add a contact",
-                    "get_contact - Get a contact",
-                    "delete_contact - Delete a contact",
+                    "weather  - And city name to display current weather",
+                    "sun_data - And city name to display sunrise and sunset information",
+                    "holiday - Country code to display which holidays are celebrated in the world today",
+                    "add_contact - Add a contact(name and phone number)",
+                    "get_contact - Get a contact (name)",
+                    "delete_contact - Delete a contact (name)",
                     "/display_contacts - Display all contacts",
-                    "/commands - Display available commands"
+                    "/commands - Display available commands",
+                    "/exchange_rate - Display exchange rate"
                 ]
                 command_list_text = "\n".join(command_list)
                 self.send_message(command_list_text)
@@ -147,10 +218,23 @@ class CallbackHandler(TelegramHandler):
 
         return output
 
+    def format_sun_data(self, sun_data):
+        sunrise = sun_data['results']['sunrise']
+        zenith = sun_data['results']['solar_noon']
+        sunset = sun_data['results']['sunset']
+        daylight_duration = sun_data['results']['day_length']
+
+        output = f"🌅️  Sunrise: {sunrise}\n"
+        output += f"☀️ Solar Noon: {zenith}\n"
+        output += f"🌥️  Sunset: {sunset}\n"
+        output += f"⏱️ Daylight Duration: {daylight_duration}\n"
+
+        return output
+
     def handle(self):
         callback_type = self.callback_data.pop('type')
         match callback_type:
-            case WEATHER_TYPE:
+            case "weather":
                 try:
                     weather = WeatherService.get_current_weather_by_geo_data(**self.callback_data)
                 except WeatherServiceException as wse:
@@ -158,3 +242,13 @@ class CallbackHandler(TelegramHandler):
                 else:
                     formatted_weather = self.format_weather_output(weather)
                     self.send_message(formatted_weather)
+
+            case 'sun_data':
+                try:
+                    sun_data = WeatherService.get_sun_data(**self.callback_data)
+                except Exception as e:
+                    self.send_message(f"An error occurred while retrieving sun data: {str(e)}")
+                else:
+                    formatted_sun_data = self.format_sun_data(sun_data)
+                    self.send_message(formatted_sun_data)
+
