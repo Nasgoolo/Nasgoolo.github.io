@@ -46,7 +46,7 @@ class MessageHandler(TelegramHandler):
 
     def handle(self):
 
-        match self.text.split()[0]:
+        match str(self.text.split()[0]).lower():
 
             case 'holiday':
                 if len(self.text.split()) < 2:
@@ -133,7 +133,7 @@ class MessageHandler(TelegramHandler):
                     self.send_message("Please specify the name of the contact.")
                 else:
                     try:
-                        name = self.text.split()[1]
+                        name = str(self.text.split()[1]).title()
                         contact = vars(get_contact(self.user.id, name))
                         print(type(contact))
                         if contact:
@@ -148,7 +148,7 @@ class MessageHandler(TelegramHandler):
                     self.send_message("Please specify the name of the contact.")
                 else:
                     try:
-                        name = self.text.split()[1]
+                        name = str(self.text.split()[1]).title()
                         contact = get_contact(self.user.id, name)
                         if contact:
                             delete_contact(self.user.id, name)
@@ -187,9 +187,9 @@ class MessageHandler(TelegramHandler):
 
             case '/commands':
                 command_list = [
+                    "holiday - Country code to display which holidays are celebrated in the world today",
                     "weather  - And city name to display current weather",
                     "sun_data - And city name to display sunrise and sunset information",
-                    "holiday - Country code to display which holidays are celebrated in the world today",
                     "add_contact - Add a contact(name and phone number)",
                     "get_contact - Get a contact (name)",
                     "delete_contact - Delete a contact (name)",
@@ -251,4 +251,3 @@ class CallbackHandler(TelegramHandler):
                 else:
                     formatted_sun_data = self.format_sun_data(sun_data)
                     self.send_message(formatted_sun_data)
-

@@ -1,5 +1,4 @@
 # Nasgoolo.github.io
-# Nasgoolo.github.io
 "The project idea revolves around creating a bot called "TG Assistant" that will solve various tasks and optimize processes for users on Telegram.
 
 The main goal of the project is to provide users with convenient access to a variety of informational services and features directly within their chosen messaging app, Telegram. Instead of searching for separate applications or visiting websites, users can interact with the "Telegram Assistant" bot by simply sending commands and receiving responses in a user-friendly format.
@@ -21,6 +20,21 @@ The key capabilities of the bot include:
 4. Holidays: The bot can notify about holidays in a particular country. You can inquire about holidays for a specific country, and the bot will provide a list of holidays with their descriptions.
 
 5. Currency Exchange Rates: The bot can provide real-time currency exchange rates. You can learn the exchange rates between the US Dollar, Euro, Polish Zloty, and Ukrainian Hryvnia."
+
+- List of commands:
+   holidays <country code>
+   weather <city name> 
+   sun_data <city name>
+   add_contact <name> <phone number> 
+   get_contact <name> <phone number> 
+   delete_contact <name> <phone number> 
+   /display_contacts 
+   /commands 
+   /exchange_rate 
+
+- Link to the landing page: https://nasgoolo.github.io
+- Link to open a chat with the created Telegram bot: https://t.me/What_are_the_holidays_today_bot
+- Link to the backend part: https://github.com/Nasgoolo/Nasgoolo.github.io/tree/main/telegram_bot
 
 /----------------------------------------------------------------------------------------------------------------------/
 
@@ -45,3 +59,17 @@ The key capabilities of the bot include:
 4. Святкові дні: Бот може повідомити про святкові дні в певній країні. Ви можете запитати святкові дні для певної країни, і бот надасть список святкових днів з їх описом.
 
 5. Курс обміну валют: Бот може надати актуальний курс обміну валют. Ви можете дізнатися курс обміну між доларом США, євро, польським злотим та українською гривнею.
+- Список команд:
+   holidays <код країни>
+   weather <ім'я міста> 
+   sun_data <ім'я міста>
+   add_contact <ім'я> <номер телефону> 
+   get_contact <ім'я> 
+   delete_contact <ім'я> 
+   /display_contacts 
+   /commands 
+   /exchange_rate 
+
+- Посилання на лендінг: https://nasgoolo.github.io
+- Посилання на відкриття чату зі створеним Telegram-ботом: https://t.me/What_are_the_holidays_today_bot
+- Посилання на Backend-частину: https://github.com/Nasgoolo/Nasgoolo.github.io/tree/main/telegram_bot
